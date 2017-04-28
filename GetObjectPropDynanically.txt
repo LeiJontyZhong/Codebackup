@@ -1,0 +1,22 @@
+        
+UnitController.cs
+
+public ActionResult GetTrainingUnitEditParams()
+        {         
+            var editRoutes = new EditTrainingUnitViewModel(LocaliserService, new JsonConvertHelper(LocaliserService));
+            FieldInfo[] fieldInfos = typeof(EditTrainingUnitViewModel).GetFields();
+            var routes = new List<KeyValuePair<string, string>>();
+            foreach (var info in fieldInfos)
+            {
+                var prop = info.GetValue(editRoutes);               
+                if (prop is RoutingInfo)
+                {
+                    var url = (prop as RoutingInfo).GetRouteUrl(HttpContext.Request.RequestContext);
+                    var name = info.Name;
+
+                    routes.Add(new KeyValuePair<string, string>(name, url));
+                }
+            }
+
+            return Json(routes, JsonRequestBehavior.AllowGet);
+}
